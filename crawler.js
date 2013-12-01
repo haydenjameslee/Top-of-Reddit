@@ -6,14 +6,17 @@ var c = new Crawler({
 // This will be called for each crawled page
 "callback":function(error,result,$) {
 
-    // $ is a jQuery instance scoped to the server-side DOM of the page
-    $("#content a").each(function(index,a) {
-        c.queue(a.href);
-    });
+  // $ is a jQuery instance scoped to the server-side DOM of the page
+  // $("#content a").each(function(index,a) {
+  //     c.queue(a.href);
+  // });
 
-    console.log(result);
+  console.log($('#siteTable > div:first-child div.entry a.title').attr('href'));
+  //.entry .title.a
 }
 });
+
+c.queue("http://www.reddit.com");
 
 // // Queue just one URL, with default callback
 // c.queue("http://joshfire.com");

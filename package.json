@@ -1,0 +1,21 @@
+{
+  "name": "Top-of-Reddit",
+  "version": "0.0.1",
+  "author": "HaydenJamesLee <haydenjameslee@gmail.com>",
+  "description": "a node server which posts the top post on reddit to a facebook account",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/haydenjameslee/Top-of-Reddit.git"
+  },
+  "keywords": [
+    "reddit",
+    "facebook",
+    "bot"
+  ],
+  "dependencies" : {
+    "crawler": "*"
+  },
+  "engines": {
+    "node": ">=0.6"
+  }
+}
