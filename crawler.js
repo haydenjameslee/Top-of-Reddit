@@ -9,6 +9,7 @@ var oldLinks = [];
 var redditUrl = keys.redditUrl;
 var fbAccessToken = keys.fbAccessToken;
 var fbFeedUrl = 'https://graph.facebook.com/'+ keys.fbAppId +'/feed/';
+var fbPhotosUrl = 'https://graph.facebook.com/'+ keys.fbAppId +'/photos/';
 googl.setKey(keys.googKey);
 
 var crawlCallback = function (error, result, $) {
@@ -29,49 +30,71 @@ var crawlCallback = function (error, result, $) {
     console.log('new link');
 
     oldLinks.push(link);
-    postLink(title, link, commentsLink);
     writeData(oldLinks);
+
+    googl.shorten(commentsLink, function (shortCommentsLink) {
+      var shortCommentsLink = shortCommentsLink.id;
+      console.log("Short comments: ", shortCommentsLink);
+
+      link = 'http://i.imgur.com/BDfo1Vu.png';
+
+      if (isImagePost(link)) {
+        var options = createPhotoOptions(title, link, shortCommentsLink);
+      } else {
+        var options = createLinkOptions(title, link, shortCommentsLink);
+      }
+      console.log(options);
+
+      request.post(options, postCallback);
+    });
   } else {
     console.log('same link');
   }
 };
 
-var postLink = function (title, link, commentsLink) {
-  // Shorten a long url and output the result
-  googl.shorten(commentsLink, function (shortCommentsUrl) {
-    console.log("Short comments: ", shortCommentsUrl.id);
+var createPhotoOptions = function (title, link, shortCommentsLink) {
+  var postData = {
+    message: title + '\n (Comments - ' + shortCommentsLink + ')',
+    url: link,
+    access_token: fbAccessToken
+  };
 
-    //post to facebook page
-    var postData = {
-      message: title + '\n (Comments - ' + shortCommentsUrl.id + ')',
-      link: link,
-      access_token: fbAccessToken
-    };
+  return {
+    uri: fbPhotosUrl,
+    body: qs.stringify(postData),
+    encoding: "utf-8"
+  };
+};
 
-    var options = {
-      uri: fbFeedUrl,
-      body: qs.stringify(postData),
-      encoding: "utf-8"
-    }
+var createLinkOptions = function (title, link, shortCommentsLink) {
+  var postData = {
+    message: title + '\n (Comments - ' + shortCommentsLink + ')',
+    link: link,
+    access_token: fbAccessToken
+  };
 
-    console.log(options);
+  return {
+    uri: fbFeedUrl,
+    body: qs.stringify(postData),
+    encoding: "utf-8"
+  };
+};
 
-    request.post(
-      options,
-      function (err, res, body) {
-        if (err) { console.log("Error posting to fb: ", err); return; }
-
-        console.log('Added to facebook: ', body);
-
-        console.log('-----------------------------------------');
-      }
-    );
-
-  });
+var postCallback = function (err, res, body) {
+  if (err) { console.log("Error posting to fb: ", err); return; }
+  console.log('Added to facebook: ', body);
+  console.log('-----------------------------------------');
 };
 
 var addRedditStem = function (link) {
   return 'http://www.reddit.com' + link;
+};
+
+var isImagePost = function (link) {
+  if (link.indexOf('imgur.com') != -1 && (link.indexOf('.jpg') != -1 || link.indexOf('.png'))) {
+    return true;
+  }
+  return false;
 };
 
 var writeData = function (data) {
@@ -79,7 +102,7 @@ var writeData = function (data) {
     if (err) throw err;
     console.log('It\'s saved!');
   });
-}
+};
 
 
 var c = new Crawler({
