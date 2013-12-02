@@ -13,7 +13,11 @@
     "bot"
   ],
   "dependencies" : {
-    "crawler": "*"
+    "crawler": "*",
+    "redis": "*",
+    "goo.gl": "*",
+    "request": "*",
+    "qs": "*"
   },
   "engines": {
     "node": ">=0.6"
