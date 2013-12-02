@@ -36,8 +36,6 @@ var crawlCallback = function (error, result, $) {
       var shortCommentsLink = shortCommentsLink.id;
       console.log("Short comments: ", shortCommentsLink);
 
-      link = 'http://i.imgur.com/BDfo1Vu.png';
-
       if (isImagePost(link)) {
         var options = createPhotoOptions(title, link, shortCommentsLink);
       } else {
