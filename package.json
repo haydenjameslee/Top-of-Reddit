@@ -17,7 +17,8 @@
     "redis": "*",
     "goo.gl": "*",
     "request": "*",
-    "qs": "*"
+    "qs": "*",
+    "mysql": "*"
   },
   "engines": {
     "node": ">=0.6"
